@@ -27,7 +27,13 @@ export default function BookingSection() {
   }, [form.appointmentAt]);
 
   const onChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    if (name === "phoneNumber") {
+      const digitsOnly = value.replace(/\D/g, "").slice(0, 10);
+      setForm((prev) => ({ ...prev, phoneNumber: digitsOnly }));
+      return;
+    }
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const onSubmit = async (e) => {
@@ -36,13 +42,17 @@ export default function BookingSection() {
     setSuccess("");
     setLoading(true);
     try {
+      if (form.phoneNumber.length !== 10) {
+        setError("Enter a valid 10-digit mobile number (no spaces).");
+        return;
+      }
       const appointmentAt = form.appointmentAt
         ? form.appointmentAt.toISOString().slice(0, 16)
         : "";
       await appointmentApi.create({
         fullName: form.fullName,
         email: form.email,
-        phoneNumber: form.phoneNumber,
+        phoneNumber: `+91${form.phoneNumber}`,
         age: Number(form.age || 0),
         sex: form.sex,
         appointmentAt,
@@ -86,7 +96,7 @@ export default function BookingSection() {
                 </p>
               </div>
             </div>
-            <form className="grid gap-4" onSubmit={onSubmit}>
+            <form className="grid gap-4" onSubmit={onSubmit} noValidate>
               <div className="grid gap-4 md:grid-cols-2">
                 <input
                   type="text"
@@ -106,14 +116,22 @@ export default function BookingSection() {
                 />
               </div>
               <div className="grid gap-4 md:grid-cols-2">
-                <input
-                  type="tel"
-                  name="phoneNumber"
-                  placeholder="Phone Number"
-                  value={form.phoneNumber}
-                  onChange={onChange}
-                  className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none"
-                />
+                <div className="flex items-center rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus-within:border-[#2FB7B1]">
+                  <span className="mr-2 text-[#6B7280]">+91</span>
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    placeholder="Phone Number"
+                    value={form.phoneNumber}
+                    onChange={onChange}
+                    inputMode="numeric"
+                    maxLength={10}
+                    aria-invalid={
+                      form.phoneNumber.length > 0 && form.phoneNumber.length !== 10
+                    }
+                    className="w-full bg-transparent text-sm text-[#1F2937] outline-none"
+                  />
+                </div>
                 <input
                   type="number"
                   name="age"
