@@ -1,4 +1,70 @@
-﻿export default function BookingSection() {
+import { useMemo, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { appointmentApi } from "../api";
+
+export default function BookingSection() {
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    phoneNumber: "",
+    age: "",
+    sex: "",
+    appointmentAt: null,
+    remarks: ""
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const { minTime, maxTime } = useMemo(() => {
+    const base = form.appointmentAt || new Date();
+    const min = new Date(base);
+    min.setHours(9, 0, 0, 0);
+    const max = new Date(base);
+    max.setHours(21, 0, 0, 0);
+    return { minTime: min, maxTime: max };
+  }, [form.appointmentAt]);
+
+  const onChange = (e) => {
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
+    try {
+      const appointmentAt = form.appointmentAt
+        ? form.appointmentAt.toISOString().slice(0, 16)
+        : "";
+      await appointmentApi.create({
+        fullName: form.fullName,
+        email: form.email,
+        phoneNumber: form.phoneNumber,
+        age: Number(form.age || 0),
+        sex: form.sex,
+        appointmentAt,
+        remarks: form.remarks
+      });
+      setSuccess("Appointment request submitted.");
+      setForm({
+        fullName: "",
+        email: "",
+        phoneNumber: "",
+        age: "",
+        sex: "",
+        appointmentAt: null,
+        remarks: ""
+      });
+    } catch (err) {
+      setError(err?.response?.data?.message || "Failed to submit appointment.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <section id="booking" className="bg-white">
       <div className="mx-auto max-w-6xl px-4 py-12">
@@ -20,59 +86,97 @@
                 </p>
               </div>
             </div>
-            <form className="grid gap-4">
+            <form className="grid gap-4" onSubmit={onSubmit}>
               <div className="grid gap-4 md:grid-cols-2">
                 <input
                   type="text"
+                  name="fullName"
                   placeholder="Full Name"
+                  value={form.fullName}
+                  onChange={onChange}
                   className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none"
                 />
                 <input
                   type="email"
-                  placeholder="Gmail"
+                  name="email"
+                  placeholder="Email"
+                  value={form.email}
+                  onChange={onChange}
                   className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none"
                 />
               </div>
               <div className="grid gap-4 md:grid-cols-2">
                 <input
                   type="tel"
+                  name="phoneNumber"
                   placeholder="Phone Number"
+                  value={form.phoneNumber}
+                  onChange={onChange}
                   className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none"
                 />
                 <input
                   type="number"
+                  name="age"
                   placeholder="Age"
+                  value={form.age}
+                  onChange={onChange}
                   className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none"
                 />
               </div>
               <div className="grid gap-4 md:grid-cols-2">
-                <select className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none">
+                <select
+                  name="sex"
+                  value={form.sex}
+                  onChange={onChange}
+                  className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none"
+                >
                   <option value="">Select Sex</option>
-                  <option>Male</option>
-                  <option>Female</option>
-                  <option>Other</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
                 </select>
-                <input
-                  type="date"
+                <DatePicker
+                  selected={form.appointmentAt}
+                  onChange={(date) =>
+                    setForm((prev) => ({ ...prev, appointmentAt: date }))
+                  }
+                  placeholderText="Select Date & Time"
                   className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none"
+                  dateFormat="dd/MM/yyyy h:mm aa"
+                  minDate={new Date()}
+                  showTimeSelect
+                  timeIntervals={30}
+                  timeCaption="Time"
+                  minTime={minTime}
+                  maxTime={maxTime}
                 />
               </div>
               <div className="grid gap-4 md:grid-cols-2">
-                <input
-                  type="time"
-                  className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none"
-                />
                 <input
                   type="text"
+                  name="remarks"
                   placeholder="Remarks"
+                  value={form.remarks}
+                  onChange={onChange}
                   className="w-full rounded-2xl border border-[#EAF4FB] bg-white px-4 py-3 text-sm text-[#1F2937] shadow-sm focus:border-[#2FB7B1] focus:outline-none"
                 />
               </div>
+              {error ? (
+                <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
+                  {error}
+                </div>
+              ) : null}
+              {success ? (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm text-emerald-700">
+                  {success}
+                </div>
+              ) : null}
               <button
-                type="button"
-                className="mt-2 rounded-full bg-[#F97316] px-6 py-3 text-sm font-semibold text-white shadow hover:bg-[#FB923C]"
+                type="submit"
+                disabled={loading}
+                className="mt-2 rounded-full bg-[#F97316] px-6 py-3 text-sm font-semibold text-white shadow hover:bg-[#FB923C] disabled:opacity-60"
               >
-                Submit Booking
+                {loading ? "Submitting..." : "Submit Booking"}
               </button>
             </form>
           </div>
