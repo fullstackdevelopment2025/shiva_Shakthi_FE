@@ -48,12 +48,7 @@ export default function Navbar() {
           </a>
         </div>
         <div className="flex items-center gap-3">
-          <a
-            href="#booking"
-            className="rounded-full bg-[#F97316] px-4 py-2 text-sm font-semibold text-white shadow hover:bg-[#FB923C]"
-          >
-            Book Appointment
-          </a>
+      
         </div>
       </div>
     </div>

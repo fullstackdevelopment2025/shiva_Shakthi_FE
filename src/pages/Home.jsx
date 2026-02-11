@@ -13,12 +13,12 @@ export default function Home() {
     <div className="min-h-screen bg-[#EAF4FB] text-[#1F2937] font-sans">
       <Hero />
       <QuickActions />
-      <BookingSection />
       <Highlights />
       <AboutLegacy />
       <FocusAreas />
       <ServicesCarousel />
       <Team />
+      <BookingSection />
       <Footer />
     </div>
   );
