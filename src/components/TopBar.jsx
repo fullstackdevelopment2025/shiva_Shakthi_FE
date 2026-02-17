@@ -82,7 +82,7 @@ export default function TopBar() {
             className="flex items-center gap-2 hover:opacity-90"
           >
             <span className="inline-flex h-2 w-2 rounded-full bg-[#CFEDEA]" />
-            Shiva Shakthi Health (Chronic Disorders and Health Programs)
+            Shiva Shakthi Health 
           </a>
           <a href="tel:8277636111" className="flex items-center gap-2 hover:opacity-90">
             <span className="inline-flex h-2 w-2 rounded-full bg-[#CFEDEA]" />

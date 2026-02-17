@@ -9,11 +9,11 @@
       <div className="relative mx-auto grid max-w-6xl items-center gap-8 px-4 py-12 md:grid-cols-2">
         <div className="text-white">
           <h1 className="text-3xl font-bold leading-tight md:text-5xl">
-            Are You Ready To <span className="text-[#CFEDEA]">Feel Better</span>?
+            Are you Ready to  Awaken Your Inner Healing Power
           </h1>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#EAF4FB] md:text-base">
-            At Shiva Shakthi Health, our integrative and functional care approach
-            creates a personalized health roadmap designed around your unique needs.
+            At Shiva Shakthi Health, we blend science and holistic care to restore
+            balance, vitality, and long-term wellness-tailored uniquely for you.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a

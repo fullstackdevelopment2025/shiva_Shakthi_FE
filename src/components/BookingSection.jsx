@@ -92,7 +92,7 @@ export default function BookingSection() {
                 <p className="text-sm font-semibold text-[#1E4F8F]">Call Us</p>
                 <p className="mt-1 text-lg font-bold text-[#0F2A44]">8277636111</p>
                 <p className="mt-3 text-sm text-[#6B7280]">
-                  Shiva Shakthi Health (Chronic Disorders and Health Programs)
+                  Shiva Shakthi Health 
                 </p>
               </div>
             </div>
